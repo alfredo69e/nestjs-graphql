@@ -1,0 +1,1 @@
+export { ExceptionEnum } from './enums/exceptions-nestjs.enum';
