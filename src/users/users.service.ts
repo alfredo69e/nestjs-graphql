@@ -8,6 +8,7 @@ import { User } from './entities';
 import { SignUpInput } from './../auth/dto';
 import { ExceptionEnum } from './../common/helpers';
 import { ValidRoles } from './../auth/enums';
+import { UpdateUserInput } from './dto';
 
 @Injectable()
 export class UsersService {
@@ -36,8 +37,8 @@ export class UsersService {
 
   async findAll( roles: ValidRoles[] ): Promise<User[]> {
 
-    if ( roles.length === 0 )  return await this.usersRepository.find();
-
+    if ( roles.length === 0 )  
+        return await this.usersRepository.find();
 
 
     return await this.usersRepository.createQueryBuilder()
@@ -46,7 +47,7 @@ export class UsersService {
         .getMany();
   }
 
-  async findOne(id: string): Promise<User> {
+  async findOne( id: string): Promise<User> {
      throw new Error(`findOne not implemented`);
     ;
   }
@@ -61,12 +62,34 @@ export class UsersService {
      }
   }
 
-  // update(id: number, updateUserInput: UpdateUserInput) {
-  //   return `This action updates a #${id} user`;
-  // }
+  async update(id: string, updateUserInput: UpdateUserInput, user: User ): Promise<User> {
+    try {
 
-  async blockUser(id: string): Promise<User> {
-    throw new Error(`blockUser not implemented`);
+      const userToUpdate = await this.usersRepository.preload({ ...updateUserInput, id });
+
+      userToUpdate.lastUpdateBy = user;
+
+      
+      return await this.usersRepository.save( userToUpdate );
+     
+     } catch ( err ) {
+      this.handleDBErros({ code: ExceptionEnum.NotFoundException, detail: `${ id } not Found` });
+     }
+  }
+
+  async blockUser(id: string, user: User ): Promise<User> {
+    try {
+
+      const userToBlock = await this.findOneById( id );
+
+      userToBlock.isActive = false;
+      userToBlock.lastUpdateBy = user;
+      
+      return await this.usersRepository.save( userToBlock );
+     
+     } catch ( err ) {
+      this.handleDBErros({ code: ExceptionEnum.NotFoundException, detail: `${ id } not Found` });
+     }
   }
 
   async findOneById( id: string ): Promise<User> {
