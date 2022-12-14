@@ -7,6 +7,7 @@ import { Repository } from 'typeorm';
 import { User } from './entities';
 import { SignUpInput } from './../auth/dto';
 import { ExceptionEnum } from './../common/helpers';
+import { ValidRoles } from './../auth/enums';
 
 @Injectable()
 export class UsersService {
@@ -33,8 +34,16 @@ export class UsersService {
    }
   }
 
-  async findAll(): Promise<User[]> {
-    return [];
+  async findAll( roles: ValidRoles[] ): Promise<User[]> {
+
+    if ( roles.length === 0 )  return await this.usersRepository.find();
+
+
+
+    return await this.usersRepository.createQueryBuilder()
+        .andWhere('ARRAY[roles] && ARRAY[:...roles]')
+        .setParameter('roles', roles)
+        .getMany();
   }
 
   async findOne(id: string): Promise<User> {

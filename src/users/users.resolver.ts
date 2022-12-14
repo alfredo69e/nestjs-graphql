@@ -2,6 +2,7 @@ import { Resolver, Query, Mutation, Args, Int, ID } from '@nestjs/graphql';
 import { UsersService } from './users.service';
 import { User } from './entities';
 import { ParseUUIDPipe } from '@nestjs/common';
+import { ValidRolesArgs } from './dto';
 
 @Resolver(() => User)
 export class UsersResolver {
@@ -9,8 +10,10 @@ export class UsersResolver {
 
   
   @Query(() => [ User ], { name: 'users' })
-  async findAll(): Promise<User[]> {
-    return await this.usersService.findAll();
+  async findAll(
+    @Args() validRoles: ValidRolesArgs
+  ): Promise<User[]> {
+    return await this.usersService.findAll( validRoles.roles );
   }
 
   @Query(() => User, { name: 'user' })
