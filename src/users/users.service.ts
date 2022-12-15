@@ -9,6 +9,7 @@ import { SignUpInput } from './../auth/dto';
 import { ExceptionEnum } from './../common/helpers';
 import { ValidRoles } from './../auth/enums';
 import { UpdateUserInput } from './dto';
+import { PaginationArgs, SearchArgs } from '../common/dto';
 
 @Injectable()
 export class UsersService {
@@ -37,16 +38,26 @@ export class UsersService {
    }
   }
 
-  async findAll( roles: ValidRoles[] ): Promise<User[]> {
+  async findAll( roles: ValidRoles[], paginationArgs: PaginationArgs, searchArgs: SearchArgs ): Promise<User[]> {
 
-    if ( roles.length === 0 )  
-        return await this.usersRepository.find();
+    const { limit, offset } = paginationArgs;
+    const { search } = searchArgs;
+
+    const queryBuilder = this.usersRepository.createQueryBuilder()
+        .take( limit )
+        .skip( offset )
+
+    if ( roles.length > 0 )  {
+      queryBuilder.andWhere('ARRAY[roles] && ARRAY[:...roles]').setParameter('roles', roles);
+    }
+
+    if( search ) {
+      queryBuilder.andWhere('LOWER(fullname) like :name', { name: `%${ search.toLowerCase() }%` });
+    }
 
 
-    return await this.usersRepository.createQueryBuilder()
-        .andWhere('ARRAY[roles] && ARRAY[:...roles]')
-        .setParameter('roles', roles)
-        .getMany();
+    return await queryBuilder.getMany();
+
   }
 
   async findOne( id: string): Promise<User> {

@@ -12,7 +12,7 @@ export class User {
   id: string;
 
   @Field(() => String, { name: 'fullName' })
-  @Column({ type: 'text' })
+  @Column({ type: 'text', name: 'fullname' })
   fullName: string;
 
   @Field(() => String, { name: 'email' })
