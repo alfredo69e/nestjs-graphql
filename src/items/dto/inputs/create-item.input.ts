@@ -9,13 +9,13 @@ export class CreateItemInput {
   @IsString()
   name: string;
 
-  @Field( () => Float )
-  @IsPositive()
-  @IsNumber()
-  quantity: number;
+  // @Field( () => Float )
+  // @IsPositive()
+  // @IsNumber()
+  // quantity: number;
 
   @Field( () => String, { nullable: true } )
   @IsString()
   @IsOptional()
-  quantityUnit?: string;
+  quantityUnits?: string;
 }
