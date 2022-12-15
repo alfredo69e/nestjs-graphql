@@ -12,7 +12,8 @@ import { Item } from './entities';
     ]),
   ],
   exports: [
-    TypeOrmModule
+    TypeOrmModule,
+    ItemsService
   ]
 })
 export class ItemsModule {}
