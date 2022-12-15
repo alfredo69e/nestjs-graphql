@@ -4,6 +4,7 @@ import { UsersResolver } from './users.resolver';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from './entities';
 import { ItemsModule } from './../items/items.module';
+import { ListsModule } from './../lists/lists.module';
 
 @Module({
   providers: [ UsersResolver, UsersService ],
@@ -12,7 +13,9 @@ import { ItemsModule } from './../items/items.module';
       User
     ]),
 
-    ItemsModule
+    ItemsModule,
+
+    ListsModule
   ],
 
   exports: [
