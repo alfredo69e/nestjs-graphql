@@ -24,8 +24,8 @@ export class ItemsResolver {
   @Query(() => [ Item ], { name: 'items' })
   async findAll(
     @Args() paginationArgs: PaginationArgs,
-    @CurrentUser() user: User,
     @Args() searchArgs: SearchArgs,
+    @CurrentUser() user: User,
   ): Promise<Item[]> {
     return await this.itemsService.findAll( user, paginationArgs, searchArgs );
   }
