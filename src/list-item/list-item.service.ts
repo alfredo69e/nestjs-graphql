@@ -4,6 +4,9 @@ import { User } from './../users/entities';
 import { ListItem } from './entities/list-item.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { List } from './../lists/entities';
+import { PaginationArgs } from '../common/dto/args/pagination.arg';
+import { SearchArgs } from '../common/dto/args/search.arg';
 
 @Injectable()
 export class ListItemService {
@@ -27,8 +30,32 @@ export class ListItemService {
     return await this.listItemsRepository.save( newListItems );
   }
 
-  findAll() {
-    return `This action returns all listItem`;
+  async findAll( list: List, paginationArgs: PaginationArgs, searchArgs: SearchArgs ): Promise<ListItem[]> {
+
+    const { limit, offset } = paginationArgs;
+    const { search } = searchArgs;
+
+    const queryBuilder = this.listItemsRepository.createQueryBuilder()
+            .take( limit )
+            .skip( offset )
+            .where(`"listId" = :listId`, { listId: list.id });
+
+    if ( search ) {
+      queryBuilder.andWhere('LOWER() like :name', { name: `%${ search.toLowerCase() }%` })
+    }
+
+    return await queryBuilder.getMany();
+  
+  }
+
+  async countListItemByList( list: List ): Promise<number> {
+    return await this.listItemsRepository.count({
+      where: {
+        list: {
+          id: list.id
+        }
+      }
+    })
   }
 
   findOne(id: number) {

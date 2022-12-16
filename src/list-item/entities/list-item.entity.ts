@@ -24,11 +24,12 @@ export class ListItem {
   complete: boolean;
 
 
+  @Field(() => List, { name: 'list' })
   @ManyToOne( ( ) => List, ( list ) => list.listItem, { lazy: true } )
   list: List;
 
-  @ManyToOne( () => Item, ( item ) => item.listItem, { lazy: true } )
   @Field(() => Item )
+  @ManyToOne( () => Item, ( item ) => item.listItem, { lazy: true } )
   item: Item;
 
   
