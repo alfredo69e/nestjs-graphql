@@ -57,6 +57,7 @@ type Query {
   item(id: ID!): Item!
   lists(offset: Int = 0, limit: Int = 10, search: String): [List!]!
   list(id: ID!): List!
+  listItem(id: ID!): ListItem!
 }
 
 type Mutation {
@@ -71,6 +72,7 @@ type Mutation {
   updateList(updateListInput: UpdateListInput!): List!
   removeList(id: ID!): List!
   createListItem(createListItemInput: CreateListItemInput!): ListItem!
+  updateListItem(updateListItemInput: UpdateListItemInput!): ListItem!
 
   """ejecuta la construccion de la base de datos"""
   executeSeed: Boolean!
@@ -121,4 +123,12 @@ input CreateListItemInput {
   complete: Boolean = false
   listId: ID!
   itemId: ID!
+}
+
+input UpdateListItemInput {
+  quantity: Int = 0
+  complete: Boolean = false
+  listId: ID
+  itemId: ID
+  id: ID!
 }

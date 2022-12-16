@@ -1,8 +1,8 @@
-import { Resolver, Query, Mutation, Args } from '@nestjs/graphql';
+import { Resolver, Query, Mutation, Args, ID } from '@nestjs/graphql';
 import { ListItemService } from './list-item.service';
 import { ListItem } from './entities/list-item.entity';
 import { CreateListItemInput, UpdateListItemInput } from './dto';
-import { UseGuards } from '@nestjs/common';
+import { UseGuards, ParseUUIDPipe } from '@nestjs/common';
 import { JwtAuthGuard } from './../auth/guards';
 import { CurrentUser } from './../auth/decorators';
 import { User } from './../users/entities';
@@ -27,15 +27,19 @@ export class ListItemResolver {
   //   return this.listItemService.findAll();
   // }
 
-  // @Query(() => ListItem, { name: 'listItem' })
-  // findOne(@Args('id', { type: () => Int }) id: number) {
-  //   return this.listItemService.findOne(id);
-  // }
+  @Query(() => ListItem, { name: 'listItem' })
+  async findOne(
+    @Args('id', { type: () => ID }, ParseUUIDPipe ) id: string
+  ): Promise<ListItem> {
+    return await this.listItemService.findOne( id );
+  }
 
-  // @Mutation(() => ListItem)
-  // updateListItem(@Args('updateListItemInput') updateListItemInput: UpdateListItemInput) {
-  //   return this.listItemService.update(updateListItemInput.id, updateListItemInput);
-  // }
+  @Mutation(() => ListItem)
+  async updateListItem(
+    @Args('updateListItemInput') updateListItemInput: UpdateListItemInput
+    ): Promise<ListItem> {
+    return await  this.listItemService.update( updateListItemInput.id, updateListItemInput );
+  }
 
   // @Mutation(() => ListItem)
   // removeListItem(@Args('id', { type: () => Int }) id: number) {
