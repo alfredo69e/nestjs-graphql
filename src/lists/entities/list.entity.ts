@@ -14,7 +14,8 @@ export class List {
   @Column({ type: 'text' })
   name: string;
 
-  @ManyToOne( () => User, ( user ) => user.lists , { lazy: true })
+  @Field(() => User, { name: 'user' })
+  @ManyToOne( () => User, ( user ) => user.lists , { nullable: false, lazy: true })
   @Index('userId-list-index')
   user: User;
 
