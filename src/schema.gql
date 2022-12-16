@@ -2,10 +2,17 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+type ListItem {
+  id: ID!
+  quantity: Float!
+  complete: Boolean!
+  item: Item!
+}
+
 type List {
   id: ID!
   name: String!
-  user: User!
+  user: [ListItem!]!
 }
 
 type User {
@@ -31,16 +38,12 @@ type Item {
   name: String!
   quantityUnits: String
   user: User!
+  listItem: [ListItem!]!
 }
 
 type AuthResponse {
   token: String!
   user: User!
-}
-
-type ListItem {
-  """Example field (placeholder)"""
-  exampleField: Int!
 }
 
 type Query {
@@ -51,7 +54,7 @@ type Query {
   item(id: ID!): Item!
   lists(offset: Int = 0, limit: Int = 10, search: String): [List!]!
   list(id: ID!): List!
-  listItem(id: Int!): ListItem!
+  listItem: [ListItem!]!
 }
 
 type Mutation {
@@ -69,8 +72,6 @@ type Mutation {
   """ejecuta la construccion de la base de datos"""
   executeSeed: Boolean!
   createListItem(createListItemInput: CreateListItemInput!): ListItem!
-  updateListItem(updateListItemInput: UpdateListItemInput!): ListItem!
-  removeListItem(id: Int!): ListItem!
 }
 
 input SignUpInput {
@@ -114,12 +115,8 @@ input UpdateListInput {
 }
 
 input CreateListItemInput {
-  """Example field (placeholder)"""
-  exampleField: Int!
-}
-
-input UpdateListItemInput {
-  """Example field (placeholder)"""
-  exampleField: Int
-  id: Int!
+  quantity: Int = 0
+  complete: Boolean = false
+  listId: ID!
+  itemId: ID!
 }
